@@ -162,7 +162,7 @@ function docker_build_and_push() {
     else
         cache_args="$cache_args --cache-from type=registry,ref=$image-cache:$BUILD_CACHE_TAG,mode=max"
     fi
-    docker buildx build $PLATFORM_ARG -o type=docker -t $image:$BUILD_TAG $cache_args $build_args -f $dockerfile .
+    docker buildx build $PLATFORM_ARG --push -t $image:$BUILD_TAG $cache_args $build_args -f $dockerfile .
 
     if $PUSH; then
         docker push $image:$BUILD_TAG
@@ -171,7 +171,7 @@ function docker_build_and_push() {
 
 
 if [ "$DISTRO" == "ubuntu" ]; then
-    docker_build_and_push "antrea/base-ubuntu" Dockerfile
+    docker_build_and_push "registry.gitlab.com/sonaproject/antrea-base-ubuntu" Dockerfile
 elif [ "$DISTRO" == "ubi" ]; then
     docker_build_and_push "antrea/base-ubi" Dockerfile.ubi
 fi

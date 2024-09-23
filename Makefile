@@ -351,18 +351,21 @@ ubuntu:
 	docker tag antrea/antrea-agent-ubuntu:$(DOCKER_IMG_VERSION) antrea/antrea-agent-ubuntu
 	docker build -t antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) -f build/images/Dockerfile.controller.ubuntu $(DOCKER_BUILD_ARGS) .
 	docker tag antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) antrea/antrea-controller-ubuntu
+	docker tag antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) registry.gitlab.com/sonaproject/antrea-controller-ubuntu:$(BUILD_TAG)
 
 .PHONY: build-controller-ubuntu
 build-controller-ubuntu:
 	@echo "===> Building antrea/antrea-controller-ubuntu Docker image <==="
 	docker build -t antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) -f build/images/Dockerfile.build.controller.ubuntu $(DOCKER_BUILD_ARGS) .
 	docker tag antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) antrea/antrea-controller-ubuntu
+	docker tag antrea/antrea-controller-ubuntu:$(DOCKER_IMG_VERSION) registry.gitlab.com/sonaproject/antrea-controller-ubuntu:$(BUILD_TAG)
 
 .PHONY: build-agent-ubuntu
 build-agent-ubuntu:
 	@echo "===> Building antrea/antrea-agent-ubuntu Docker image <==="
 	docker build -t antrea/antrea-agent-ubuntu:$(DOCKER_IMG_VERSION) -f build/images/Dockerfile.build.agent.ubuntu $(DOCKER_BUILD_ARGS) .
 	docker tag antrea/antrea-agent-ubuntu:$(DOCKER_IMG_VERSION) antrea/antrea-agent-ubuntu
+	docker tag antrea/antrea-agent-ubuntu:$(DOCKER_IMG_VERSION) registry.gitlab.com/sonaproject/antrea-agent-ubuntu:$(BUILD_TAG)
 
 # These 2 targets are here for "backwards-compatibility". They will build the agent and controller
 # images for the requested distribution.

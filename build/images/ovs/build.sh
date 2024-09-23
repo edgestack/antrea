@@ -151,7 +151,7 @@ function docker_build_and_push() {
     else
         cache_args="$cache_args --cache-from type=registry,ref=$image-cache:$BUILD_CACHE_TAG,mode=max"
     fi
-    docker buildx build $PLATFORM_ARG -o type=docker -t $image:$BUILD_TAG $cache_args $build_args -f $dockerfile .
+    docker buildx build $PLATFORM_ARG -t $image:$BUILD_TAG $cache_args $build_args -f $dockerfile .
 
     if $PUSH; then
         docker push $image:$BUILD_TAG
@@ -159,7 +159,7 @@ function docker_build_and_push() {
 }
 
 if [ "$DISTRO" == "ubuntu" ]; then
-    docker_build_and_push "antrea/openvswitch" "Dockerfile"
+    docker_build_and_push "registry.gitlab.com/sonaproject/antrea-openvswitch" "Dockerfile"
 elif [ "$DISTRO" == "ubi" ]; then
     docker_build_and_push "antrea/openvswitch-ubi" "Dockerfile.ubi"
 elif [ "$DISTRO" == "windows" ]; then

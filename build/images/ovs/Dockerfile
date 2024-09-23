@@ -52,7 +52,7 @@ COPY charon-logging.conf /tmp
 # We clean-up apt cache after installing packages to reduce the size of the
 # final image.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends iptables logrotate libstrongswan-standard-plugins && \
+    apt-get install -y --no-install-recommends iptables logrotate libstrongswan-standard-plugins openssl libssl-dev python3-all libunbound8 iproute2 strongswan uuid-runtime kmod && \
     # -f / --fix-broken will take care of installing all missing dependencies
     apt-get -f -y --no-install-recommends install /tmp/ovs-debs/*.deb && \
     # make sure that openvswitch packages will not be upgraded by mistake

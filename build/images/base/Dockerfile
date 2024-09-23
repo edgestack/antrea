@@ -13,6 +13,7 @@
 # limitations under the License.
 
 ARG BUILD_TAG
+ARG SURICATA_VERSION
 FROM ubuntu:22.04 AS cni-binaries
 
 ARG CNI_BINARIES_VERSION
@@ -35,8 +36,7 @@ RUN set -eux; \
     mkdir -p /opt/cni/bin; \
     wget -q -O - https://github.com/containernetworking/plugins/releases/download/$CNI_BINARIES_VERSION/cni-plugins-linux-${pluginsArch}-$CNI_BINARIES_VERSION.tgz | tar xz -C /opt/cni/bin $CNI_PLUGINS
 
-FROM antrea/openvswitch:${BUILD_TAG}
-
+FROM registry.gitlab.com/sonaproject/antrea-openvswitch:${BUILD_TAG}
 ARG SURICATA_VERSION
 
 LABEL maintainer="Antrea <projectantrea-dev@googlegroups.com>"
@@ -48,12 +48,15 @@ USER root
 # /iptables-wrapper-installer.sh will have permissions of 600.
 # --chmod=700 doesn't work with older versions of Docker and requires DOCKER_BUILDKIT=1, so we use
 # chmod in the RUN command below instead.
-ADD https://raw.githubusercontent.com/kubernetes-sigs/iptables-wrappers/9e6ce59c864623ea71a6f7d59c35fcb13a919b87/iptables-wrapper-installer.sh /iptables-wrapper-installer.sh
+ADD https://raw.githubusercontent.com/edgestack/iptables-wrappers/master/iptables-wrapper-installer.sh /iptables-wrapper-installer.sh
 
-RUN apt-get update && apt-get install -y --no-install-recommends ipset jq inotify-tools gpg-agent software-properties-common && \
+RUN apt-get update && apt-get install -y --no-install-recommends ipset jq inotify-tools gpg-agent software-properties-common iptables && \
     add-apt-repository ppa:oisf/suricata-${SURICATA_VERSION} && apt-get update && apt-get install -y suricata && \
     apt-get remove -y gpg-agent software-properties-common && apt-get autoremove -y && rm -rf /var/cache/apt/* /var/lib/apt/lists/* && \
     chmod +x /iptables-wrapper-installer.sh && \
-    /iptables-wrapper-installer.sh
+    /iptables-wrapper-installer.sh --no-sanity-check
+
+RUN ln -s /usr/sbin/iptables /usr/local/bin/iptables && \
+    ln -s /usr/sbin/ip6tables /usr/local/bin/ip6tables
 
 COPY --from=cni-binaries /opt/cni/bin /opt/cni/bin
